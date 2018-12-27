@@ -38,7 +38,7 @@ describe('index.js', () => {
 //     waitsFor(() => connected);
 //     return runs(() => expect(client.connected).toBe(true));
 //   });
-  
+
 //   it("lets you connect to a server and get a callback", function() {
 //     const client = Stomp.client("ws://mocked/stomp/server");
 //     let connected = false;
@@ -46,7 +46,7 @@ describe('index.js', () => {
 //     waitsFor(() => connected);
 //     return runs(() => expect(client.connected).toBe(true));
 //   });
-  
+
 //   it("lets you subscribe to a destination", function() {
 //     const client = Stomp.client("ws://mocked/stomp/server");
 //     let subscription = null;
@@ -54,7 +54,7 @@ describe('index.js', () => {
 //     waitsFor(() => subscription);
 //     return runs(() => expect(Object.keys(client.ws.subscriptions)).toContain(subscription.id));
 //   });
-  
+
 //   it("lets you publish a message to a destination", function() {
 //     const client = Stomp.client("ws://mocked/stomp/server");
 //     let message = null;
@@ -66,7 +66,6 @@ describe('index.js', () => {
 //     return runs(() => expect(client.ws.messages.pop().toString()).toContain(message));
 //   });
 
-  
 //   it("lets you unsubscribe from a destination", function() {
 //     const client = Stomp.client("ws://mocked/stomp/server");
 //     let unsubscribed = false;
@@ -79,7 +78,7 @@ describe('index.js', () => {
 //     waitsFor(() => unsubscribed);
 //     return runs(() => expect(Object.keys(client.ws.subscriptions)).not.toContain(subscription.id));
 //   });
-    
+
 //   it("lets you receive messages only while subscribed", function() {
 //     const client = Stomp.client("ws://mocked/stomp/server");
 //     let subscription = null;
@@ -94,14 +93,14 @@ describe('index.js', () => {
 //       expect(messages.length).toEqual(2);
 //       subscription.unsubscribe();
 //       try {
-//         client.ws.test_send(id, Math.random()); 
+//         client.ws.test_send(id, Math.random());
 //       } catch (err) {
 //         null;
 //       }
 //       return expect(messages.length).toEqual(2);
 //     });
 //   });
-  
+
 //   it("lets you send messages in a transaction", function() {
 //     const client = Stomp.client("ws://mocked/stomp/server");
 //     let connected = false;
@@ -118,7 +117,7 @@ describe('index.js', () => {
 //       return expect(client.ws.messages.length).toEqual(3);
 //     });
 //   });
-  
+
 //   return it("lets you abort a transaction", function() {
 //     const client = Stomp.client("ws://mocked/stomp/server");
 //     let connected = false;

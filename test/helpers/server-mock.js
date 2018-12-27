@@ -44,7 +44,7 @@ class StompServerMock extends Server {
   // }
   // stomp_send_message(destination, subscription, message_id, body) {
   //   return this.stomp_send('MESSAGE', {
-  //     'destination': destination, 
+  //     'destination': destination,
   //     'message-id': message_id,
   //     'subscription': subscription}, body)
   // }
