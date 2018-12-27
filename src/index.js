@@ -1,30 +1,79 @@
-import 'stompjs'
+import Observer from './Observer'
+import Emitter from './Emitter'
+
 const VueSWS = {}
-VueSWS.install = function (Vue, options) {
-  // // 1. ajouter une méthode globale ou une propriété
-  const user = function () {
-    return Vue.ls.get('user')
+VueSWS.install = function (Vue, connection, opts = {}) {
+  if (!connection) { throw new Error('[vuejs-stomp-ws] cannot locate connection') }
+
+  let observer = null
+
+  opts.$setInstance = (wsInstance) => {
+    Vue.prototype.$swSocket = wsInstance
   }
-  Vue.user = user
-  Vue.prototype.$user = user
 
-  // // 2. ajouter une ressource globale
-  // Vue.directive('my-directive', {
-  //   bind (el, binding, vnode, oldVnode) {
-  //     // de la logique de code...
-  //   }
-  //   ...
-  // })
+  if (opts.connectManually) {
+    Vue.prototype.$connect = (connectionUrl = connection, connectionOpts = opts) => {
+      observer = new Observer(connectionUrl, connectionOpts)
+      Vue.prototype.$swSocket = observer.WebSocket
+    }
 
-  // // 3. injecter des options de composant
+    Vue.prototype.$disconnect = () => {
+      if (observer && observer.reconnection) { observer.reconnection = false }
+      if (Vue.prototype.$swSocket) {
+        Vue.prototype.$swSocket.close()
+        delete Vue.prototype.$swSocket
+      }
+    }
+  } else {
+    observer = new Observer(connection, opts)
+    Vue.prototype.$swSocket = observer.WebSocket
+  }
+  const hasProxy = typeof Proxy !== 'undefined' && typeof Proxy === 'function' && /native code/.test(Proxy.toString())
+
   Vue.mixin({
-    beforeCreate: function () {}
-  })
+    created () {
+      const vm = this
+      const sockets = this.$options['sockets']
+      if (hasProxy) {
+        this.$options.sockets = new Proxy({}, {
+          set (target, key, value) {
+            Emitter.addListener(key, value, vm)
+            target[key] = value
+            return true
+          },
+          deleteProperty (target, key) {
+            Emitter.removeListener(key, vm.$options.sockets[key], vm)
+            delete target.key
+            return true
+          }
+        })
+        if (sockets) {
+          Object.keys(sockets).forEach((key) => {
+            this.$options.sockets[key] = sockets[key]
+          })
+        }
+      } else {
+        Object.seal(this.$options.sockets)
+        // if !hasProxy need addListener
+        if (sockets) {
+          Object.keys(sockets).forEach(key => {
+            Emitter.addListener(key, sockets[key], vm)
+          })
+        }
+      }
+    },
+    beforeDestroy () {
+      if (hasProxy) {
+        const sockets = this.$options['sockets']
 
-  // // 4. ajouter une méthode d'instance
-  // Vue.prototype.$mymethode = function(link, options) {
-  //   // de la logique de code...
-  // };
+        if (sockets) {
+          Object.keys(sockets).forEach((key) => {
+            delete this.$options.sockets[key]
+          })
+        }
+      }
+    }
+  })
 }
 
 // Auto-install
