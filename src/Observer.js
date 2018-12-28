@@ -32,7 +32,6 @@ export default class {
     if (opts.mutations) {
       this.mutations = opts.mutations
     }
-    // this.onEvent()
   }
 
   connect (connectionUrl, opts = {}) {
@@ -45,13 +44,18 @@ export default class {
     this.WebSocket.debug = debug
     const onConnect = () => {
       Object.keys(subscribes).forEach(key => {
-        console.info(key)
         this.WebSocket.subscribe(key, subscribes[key])
       })
       Emitter.emit('onConnect', 'onConnect')
+      if (this.store) {
+        this.passToStore('SOCKET_ON_CONNECT', true)
+      }
     }
     const onError = () => {
       Emitter.emit('onError', 'onError')
+      if (this.store) {
+        this.passToStore('SOCKET_ON_ERROR', true)
+      }
     }
     this.WebSocket.connect(
       login,

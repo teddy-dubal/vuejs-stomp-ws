@@ -775,7 +775,6 @@ var _class = function () {
     if (opts.mutations) {
       this.mutations = opts.mutations;
     }
-    // this.onEvent()
   }
 
   _createClass(_class, [{
@@ -794,13 +793,18 @@ var _class = function () {
       this.WebSocket.debug = debug;
       var onConnect = function onConnect() {
         Object.keys(subscribes).forEach(function (key) {
-          console.info(key);
           _this.WebSocket.subscribe(key, subscribes[key]);
         });
         _Emitter2.default.emit('onConnect', 'onConnect');
+        if (_this.store) {
+          _this.passToStore('SOCKET_ON_CONNECT', true);
+        }
       };
       var onError = function onError() {
         _Emitter2.default.emit('onError', 'onError');
+        if (_this.store) {
+          _this.passToStore('SOCKET_ON_ERROR', true);
+        }
       };
       this.WebSocket.connect(login, password, onConnect, onError, vhost);
       if (this.format === 'json') {
