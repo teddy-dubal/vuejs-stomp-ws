@@ -788,6 +788,7 @@ var _class = function () {
       var login = opts.headers && opts.headers.login || '';
       var vhost = opts.headers && opts.headers.vhost || '';
       var subscribes = opts.subscribes || {};
+      var topics = opts.topics || [];
       var debug = opts.debug || false;
       this.WebSocket = opts.WebSocket || _stompjs2.default.client(connectionUrl);
       this.WebSocket.debug = debug;
@@ -809,8 +810,13 @@ var _class = function () {
       this.WebSocket.connect(login, password, onConnect, onError, vhost);
       if (this.format === 'json') {
         if (!('sendObj' in this.WebSocket)) {
-          this.WebSocket.sendObj = function (obj) {
-            return _this.WebSocket.send(JSON.stringify(obj));
+          this.WebSocket.sendObj = function (topic, obj) {
+            if (!topic) {
+              throw new Error('[vuejs-stomp-ws] topic required');
+            }
+            _this.WebSocket.send(topic, JSON.stringify(obj));
+            _Emitter2.default.emit('send', obj);
+            _this.passToStore('SOCKET_ON_SEND', obj);
           };
         }
       }

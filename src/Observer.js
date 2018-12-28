@@ -39,6 +39,7 @@ export default class {
     const login = (opts.headers && opts.headers.login) || ''
     const vhost = (opts.headers && opts.headers.vhost) || ''
     const subscribes = opts.subscribes || {}
+    const topics = opts.topics || []
     const debug = opts.debug || false
     this.WebSocket = opts.WebSocket || Stomp.client(connectionUrl)
     this.WebSocket.debug = debug
@@ -66,7 +67,14 @@ export default class {
     )
     if (this.format === 'json') {
       if (!('sendObj' in this.WebSocket)) {
-        this.WebSocket.sendObj = obj => this.WebSocket.send(JSON.stringify(obj))
+        this.WebSocket.sendObj = (topic, obj) => {
+          if (!topic) {
+            throw new Error('[vuejs-stomp-ws] topic required')
+          }
+          this.WebSocket.send(topic, JSON.stringify(obj))
+          Emitter.emit('send', obj)
+          this.passToStore('SOCKET_ON_SEND', obj)
+        }
       }
     }
     return this.WebSocket
