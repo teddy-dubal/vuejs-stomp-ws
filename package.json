@@ -1,6 +1,6 @@
 {
   "name": "vuejs-stomp-ws",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Vue.js Plugin",
   "author": "T.ED <teddy.dubal@gmail.com>",
   "main": "dist/vuejs-stomp-ws.common.js",
