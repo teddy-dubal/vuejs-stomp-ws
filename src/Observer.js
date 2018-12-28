@@ -21,36 +21,48 @@ export default class {
 
     this.passToStoreHandler = this.opts.passToStoreHandler || false
 
-    this.connect(connectionUrl, opts)
+    this.connect(
+      connectionUrl,
+      opts
+    )
 
-    if (opts.store) { this.store = opts.store }
-    if (opts.mutations) { this.mutations = opts.mutations }
+    if (opts.store) {
+      this.store = opts.store
+    }
+    if (opts.mutations) {
+      this.mutations = opts.mutations
+    }
     // this.onEvent()
   }
 
   connect (connectionUrl, opts = {}) {
-    const password = opts.headers && opts.headers.password || ''
-    const login = opts.headers && opts.headers.login || ''
-    const vhost = opts.headers && opts.headers.vhost || ''
+    const password = (opts.headers && opts.headers.password) || ''
+    const login = (opts.headers && opts.headers.login) || ''
+    const vhost = (opts.headers && opts.headers.vhost) || ''
+    const subscribes = opts.subscribes || {}
     const debug = opts.debug || false
+    this.WebSocket = opts.WebSocket || Stomp.client(connectionUrl)
+    this.WebSocket.debug = debug
     const onConnect = () => {
+      Object.keys(subscribes).forEach(key => {
+        console.info(key)
+        this.WebSocket.subscribe(key, subscribes[key])
+      })
       Emitter.emit('onConnect', 'onConnect')
-      if (opts.onConnect) {
-        opts.onConnect
-      }
     }
     const onError = () => {
       Emitter.emit('onError', 'onError')
-      if (opts.onError) {
-        opts.onError
-      }
     }
-    this.WebSocket = opts.WebSocket || Stomp.client(connectionUrl)
-    this.WebSocket.debug = debug
-    this.WebSocket.connect(login, password, onConnect, onError, vhost)
+    this.WebSocket.connect(
+      login,
+      password,
+      onConnect,
+      onError,
+      vhost
+    )
     if (this.format === 'json') {
       if (!('sendObj' in this.WebSocket)) {
-        this.WebSocket.sendObj = (obj) => this.WebSocket.send(JSON.stringify(obj))
+        this.WebSocket.sendObj = obj => this.WebSocket.send(JSON.stringify(obj))
       }
     }
     return this.WebSocket
@@ -62,53 +74,70 @@ export default class {
       clearTimeout(this.reconnectTimeoutId)
 
       this.reconnectTimeoutId = setTimeout(() => {
-        if (this.store) { this.passToStore('SOCKET_RECONNECT', this.reconnectionCount) }
+        if (this.store) {
+          this.passToStore('SOCKET_RECONNECT', this.reconnectionCount)
+        }
 
-        this.connect(this.connectionUrl, this.opts)
+        this.connect(
+          this.connectionUrl,
+          this.opts
+        )
         this.onEvent()
       }, this.reconnectionDelay)
     } else {
-      if (this.store) { this.passToStore('SOCKET_RECONNECT_ERROR', true) }
+      if (this.store) {
+        this.passToStore('SOCKET_RECONNECT_ERROR', true)
+      }
     }
   }
 
   onEvent () {
-    ['onmessage', 'onclose', 'onerror', 'onopen'].forEach((eventType) => {
-      this.WebSocket[eventType] = (event) => {
+    ;['onmessage', 'onclose', 'onerror', 'onopen'].forEach(eventType => {
+      this.WebSocket[eventType] = event => {
         Emitter.emit(eventType, event)
 
-        if (this.store) { this.passToStore('SOCKET_' + eventType, event) }
+        if (this.store) {
+          this.passToStore('SOCKET_' + eventType, event)
+        }
 
         if (this.reconnection && eventType === 'onopen') {
           this.opts.$setInstance(event.currentTarget)
           this.reconnectionCount = 0
         }
 
-        if (this.reconnection && eventType === 'onclose') { this.reconnect() }
+        if (this.reconnection && eventType === 'onclose') {
+          this.reconnect()
+        }
       }
     })
   }
 
   passToStore (eventName, event) {
     if (this.passToStoreHandler) {
-      this.passToStoreHandler(eventName, event, this.defaultPassToStore.bind(this))
+      this.passToStoreHandler(
+        eventName,
+        event,
+        this.defaultPassToStore.bind(this)
+      )
     } else {
       this.defaultPassToStore(eventName, event)
     }
   }
 
   defaultPassToStore (eventName, event) {
-    if (!eventName.startsWith('SOCKET_')) { return }
+    if (!eventName.startsWith('SOCKET_')) {
+      return
+    }
     let method = 'commit'
     let target = eventName.toUpperCase()
     let msg = event
     if (this.format === 'json' && event.data) {
       msg = JSON.parse(event.data)
       if (msg.mutation) {
-        target = [msg.namespace || '', msg.mutation].filter((e) => !!e).join('/')
+        target = [msg.namespace || '', msg.mutation].filter(e => !!e).join('/')
       } else if (msg.action) {
         method = 'dispatch'
-        target = [msg.namespace || '', msg.action].filter((e) => !!e).join('/')
+        target = [msg.namespace || '', msg.action].filter(e => !!e).join('/')
       }
     }
     if (this.mutations) {

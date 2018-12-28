@@ -4,14 +4,40 @@ import VueSws from 'src/index'
 // import { Server } from 'mock-socket'
 import Server from '../helpers/server-mock'
 
-describe('index.js', () => {
+describe('VueJs Stomp WebSocket', () => {
   let mockServer
 
-  it('can be bound to the onopen event', (done) => {
+  it('lets you connect to a server manually with a websocket and get a callback', done => {
     mockServer = new Server('ws://localhost:8080')
-    Vue.use(VueSws, 'ws://localhost:8080')
-    // const vm = new Vue()
-    mockServer.stop(done)
+    mockServer.on('connection', socket => {
+      socket.on('message', () => {
+        console.info('UN MESSAGE')
+      })
+      socket.on('close', () => {
+        console.info('UN close')
+      })
+
+      socket.send('message')
+      socket.close()
+      mockServer.stop(done)
+    })
+    Vue.use(VueSws, {
+      connectManually: true
+    })
+    const vm = new Vue()
+    vm.$connect('ws://localhost:8080', {
+      debug: true,
+      headers: {
+        login: 'guest',
+        password: 'guest'
+      },
+      subscribes: {
+        '/exchange/amq.topic/common': () => {
+          console.info('subs')
+        }
+      }
+    })
+    // mockServer.stop(done)
     // console.info(vm.$swSocket)
     // vm.$options.sockets.onopen = (data) => {
     //   expect(data.type).to.equal('open')
