@@ -1,13 +1,13 @@
-# Vuejs Stomp Ws
+# Sws
 
-[![npm](https://img.shields.io/npm/v/stomp-ws.svg)](https://www.npmjs.com/package/stomp-ws) [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
+[![npm](https://img.shields.io/npm/v/sws.svg)](https://www.npmjs.com/package/sws) [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 
-> This library provides a STOMP client for VueJS app (using Web Sockets)
+> A Vue.js Plugin
 
 ## Installation
 
 ```bash
-npm install --save stomp-ws
+npm install --save sws
 ```
 
 ## Usage
@@ -16,11 +16,11 @@ npm install --save stomp-ws
 
 ```js
 import Vue from 'vue'
-import Vuejs Stomp Ws from 'stomp-ws'
+import Sws from 'sws'
 // You need a specific loader for CSS files like https://github.com/webpack/css-loader
-import 'stomp-ws/dist/stomp-ws.css'
+import 'sws/dist/sws.css'
 
-Vue.use(Vuejs Stomp Ws)
+Vue.use(Sws)
 ```
 
 ### Browser
@@ -28,12 +28,12 @@ Vue.use(Vuejs Stomp Ws)
 ```html
 <!-- Include after Vue -->
 <!-- Local files -->
-<link rel="stylesheet" href="stomp-ws/dist/stomp-ws.css"></link>
-<script src="stomp-ws/dist/stomp-ws.js"></script>
+<link rel="stylesheet" href="sws/dist/sws.css"></link>
+<script src="sws/dist/sws.js"></script>
 
 <!-- From CDN -->
-<link rel="stylesheet" href="https://unpkg.com/stomp-ws/dist/stomp-ws.css"></link>
-<script src="https://unpkg.com/stomp-ws"></script>
+<link rel="stylesheet" href="https://unpkg.com/sws/dist/sws.css"></link>
+<script src="https://unpkg.com/sws"></script>
 ```
 
 ## Development

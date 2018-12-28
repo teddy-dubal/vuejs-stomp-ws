@@ -2,7 +2,7 @@
 
 Contributions are **welcome** and will be fully **credited**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/teddy-dubal/stomp-ws).
+We accept contributions via Pull Requests on [Github](https://github.com/teddy-dubal/sws).
 
 
 ## Pull Requests
