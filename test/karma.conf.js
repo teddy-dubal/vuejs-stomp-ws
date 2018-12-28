@@ -18,7 +18,7 @@ vueRule.options.loaders.js = 'babel-loader'
 // no need for app entry during tests
 delete webpackConfig.entry
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     // to run in additional browsers:
     // 1. install corresponding karma launcher
