@@ -53,7 +53,7 @@
     "lint-staged": "^10.2.11",
     "mocha": "^8.1.0",
     "mock-socket": "^9.0.3",
-    "postcss": "^7.0.32",
+    "postcss": "^8.2.10",
     "postcss-cssnext": "^3.1.0",
     "sinon": "^9.0.2",
     "sinon-chai": "^3.5.0",
