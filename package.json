@@ -1,6 +1,7 @@
 {
-  "name": "vuejs-stomp-ws",
-  "version": "0.0.3",
+  "name": "@teddy-dubal/vuejs-stomp-ws",
+  "version": "0.0.5",
+  "repository": "teddy-dubal/vuejs-stomp-ws",
   "description": "A Vue.js Plugin",
   "author": "T.ED <teddy.dubal@gmail.com>",
   "main": "dist/vuejs-stomp-ws.common.js",
@@ -84,18 +85,11 @@
       "style-loader/addStyles.js"
     ]
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/teddy-dubal/vuejs-stomp-ws.git"
-  },
   "bugs": {
     "url": "https://github.com/teddy-dubal/vuejs-stomp-ws/issues"
   },
   "homepage": "https://github.com/teddy-dubal/vuejs-stomp-ws#readme",
-  "license": {
-    "type": "MIT",
-    "url": "http://www.opensource.org/licenses/mit-license.php"
-  },
+  "license": "MIT",
   "browserslist": [
     "last 2 versions"
   ],
